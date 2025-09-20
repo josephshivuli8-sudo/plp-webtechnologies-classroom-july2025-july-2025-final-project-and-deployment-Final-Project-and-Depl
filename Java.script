@@ -1,0 +1,108 @@
+// JavaScript for interactivity on the website.
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Part 1: Mobile Navigation Toggle
+    // This code handles the hamburger menu functionality for mobile view.
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            // Toggles the 'active' class on the links to show/hide them.
+            navLinks.classList.toggle('active');
+            // Toggles the 'open' class on the toggle button for the animated state.
+            navToggle.classList.toggle('open');
+        });
+    }
+
+    // Part 2: Contact Form Validation
+    // This code validates the contact form before submission.
+    const contactForm = document.getElementById('contact-form');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            // Prevent the default form submission to handle it with JavaScript.
+            e.preventDefault(); 
+
+            // Get form values
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            // Simple validation checks
+            if (name === '' || email === '' || message === '') {
+                showModal('Please fill out all fields.');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showModal('Please enter a valid email address.');
+                return;
+            }
+
+            // If validation passes, show success message.
+            showModal('Thank you! Your message has been sent.', true);
+            contactForm.reset();
+        });
+    }
+
+    // A helper function to validate an email address using a simple regex.
+    function isValidEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+    
+    // Custom modal function to replace alert()
+    function showModal(message, isSuccess = false) {
+        // Create a new div element for the modal
+        const modal = document.createElement('div');
+        modal.className = `modal-container ${isSuccess ? 'success' : 'error'}`;
+        modal.innerHTML = `
+            <div class="modal-content">
+                <p>${message}</p>
+                <button class="modal-close-btn">OK</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Add CSS for the modal
+        const modalStyle = document.createElement('style');
+        modalStyle.innerHTML = `
+            .modal-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+            .modal-content {
+                background-color: white;
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            .modal-close-btn {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                margin-top: 10px;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+        `;
+        document.head.appendChild(modalStyle);
+
+        // Close the modal when the button is clicked
+        modal.querySelector('.modal-close-btn').addEventListener('click', () => {
+            modal.remove();
+            modalStyle.remove();
+        });
+    }
+});
